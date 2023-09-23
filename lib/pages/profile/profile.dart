@@ -164,6 +164,7 @@ class _ProfileState extends State<Profile> {
                     backgroundImage: NetworkImage(strimgurl),
                   )
                 : const CircleAvatar(
+                    radius: 50,
                     backgroundImage: AssetImage('assets/logo.jpg'),
                   ),
             widthSpace,
@@ -257,6 +258,7 @@ class _ProfileState extends State<Profile> {
           image: 'assets/icons/profile.png',
           color: blackColor,
         ),
+        Divider(color: Colors.grey.shade300,),
         detail(
           ontap: () {
             currentIndex = 1;
@@ -269,6 +271,7 @@ class _ProfileState extends State<Profile> {
           image: 'assets/icons/filter.png',
           color: blackColor,
         ),
+        Divider(color: Colors.grey.shade300,),
         detail(
           ontap: () {
             currentIndex = 1;
@@ -281,6 +284,7 @@ class _ProfileState extends State<Profile> {
           image: 'assets/icons/family.png',
           color: blackColor,
         ),
+        Divider(color: Colors.grey.shade300,),
         detail(
           ontap: () {
             currentIndex = 1;
@@ -293,6 +297,7 @@ class _ProfileState extends State<Profile> {
           image: 'assets/icons/matches.png',
           color: blackColor,
         ),
+        Divider(color: Colors.grey.shade300,),
         detail(
           ontap: () => Navigator.push(
             context,
@@ -302,6 +307,7 @@ class _ProfileState extends State<Profile> {
           image: 'assets/icons/star.png',
           color: blackColor,
         ),
+        Divider(color: Colors.grey.shade300,),
         // detail(
         //   ontap: () => Navigator.push(
         //     context,
@@ -320,12 +326,14 @@ class _ProfileState extends State<Profile> {
           image: 'assets/icons/chat.png',
           color: blackColor,
         ),
+        Divider(color: Colors.grey.shade300,),
         detail(
           ontap: () => IntentUtils.openWhatsapp(context, "+91 9898777175"),
           title: 'Support',
           image: 'assets/icons/support.png',
           color: blackColor,
         ),
+        Divider(color: Colors.grey.shade300,),
         // detail(
         //   ontap: () => Navigator.push(
         //     context,
@@ -344,6 +352,7 @@ class _ProfileState extends State<Profile> {
           image: 'assets/icons/subscribe.png',
           color: blackColor,
         ),
+        Divider(color: Colors.grey.shade300,),
         // detail(
         //   ontap: () => Navigator.push(
         //     context,
@@ -359,8 +368,7 @@ class _ProfileState extends State<Profile> {
           image: 'assets/icons/condition.png',
           color: blackColor,
         ),
-        heightSpace,
-        heightSpace,
+        Divider(color: Colors.grey.shade300,),
         detail(
           ontap: () => logoutDialog(context),
           title: 'Logout',
@@ -388,8 +396,8 @@ class _ProfileState extends State<Profile> {
             Image.asset(
               image,
               color: color,
-              height: 20,
-              width: 20,
+              height: 30,
+              width: 30,
               fit: BoxFit.cover,
             ),
             widthSpace,

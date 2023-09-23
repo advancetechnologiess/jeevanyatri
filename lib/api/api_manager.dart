@@ -520,19 +520,19 @@ class API_Manager {
   }
 
   static Future<UserMatchModel> discoverLocationMatch(
-      String city, String userId) async {
+      String city, String userId,String Gender) async {
     final response = await http.post(
         Uri.parse("${base_url}discoverLocationMatch"),
-        body: {"city": city, "uId": userId});
+        body: {"city": city, "uId": userId,"gender": Gender});
 
     return userMatchModelFromJson(response.body);
   }
 
   static Future<UserMatchModel> discoverProfessionMatch(
-      String profession, String userId) async {
+      String profession, String userId,String Gender) async {
     final response = await http.post(
         Uri.parse("${base_url}discoverProfessionMatch"),
-        body: {"profession": profession, "uId": userId});
+        body: {"profession": profession, "uId": userId,"gender": Gender});
 
     return userMatchModelFromJson(response.body);
   }

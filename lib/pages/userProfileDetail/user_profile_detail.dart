@@ -1,4 +1,5 @@
 import 'package:csc_picker/csc_picker.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meet_me/models/family_details_model.dart';
 import 'package:meet_me/pages/screens.dart';
@@ -318,16 +319,33 @@ class _UserProfileDetailState extends State<UserProfileDetail>
     });
   }
 
-  checkPermission() async {
-    final status = await Permission.storage.request();
-    // final status2 = await Permission.camera.request();
-    if (status == PermissionStatus.granted) {
-      print('Permission granted.');
-      _pickImage();
-    } else if (status == PermissionStatus.denied) {
-      print(
-          'Permission denied. Show a dialog and again ask for the permission');
-      await Permission.storage.shouldShowRequestRationale;
+  checkPermission() async{
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    if (androidInfo.version.sdkInt >= 33) {
+      final videos = await Permission.videos.request();
+      final photos = await Permission.photos.request();
+
+      if (videos == PermissionStatus.granted && photos == PermissionStatus.granted) {
+        print('Permission granted.');
+        _pickImage();
+      } else if (videos == PermissionStatus.denied || photos == PermissionStatus.denied) {
+        print('Permission denied. Show a dialog and again ask for the permission');
+        await [Permission.photos, Permission.videos].request();
+      }
+    } else {
+      final status = await Permission.storage.request();
+      print("Inner Called "+status.toString());
+      // final status2 = await Permission.camera.request();
+      if(status == PermissionStatus.permanentlyDenied){
+        openAppSettings();
+      } else if (status == PermissionStatus.granted) {
+        print('Permission granted.');
+        _pickImage();
+      } else if (status == PermissionStatus.denied) {
+        print('Permission denied. Show a dialog and again ask for the permission');
+        await Permission.storage.shouldShowRequestRationale;
+      }
     }
   }
 
@@ -528,7 +546,7 @@ class _UserProfileDetailState extends State<UserProfileDetail>
                 },
                 child: Container(
                   height: 40,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: isSelected == 'details'
@@ -589,7 +607,7 @@ class _UserProfileDetailState extends State<UserProfileDetail>
                 },
                 child: Container(
                   height: 40,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: isSelected == 'preferences'
@@ -648,7 +666,7 @@ class _UserProfileDetailState extends State<UserProfileDetail>
                 },
                 child: Container(
                   height: 40,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: isSelected == 'family'

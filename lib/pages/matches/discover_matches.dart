@@ -199,8 +199,8 @@ class _DiscoverMatchesState extends State<DiscoverMatches> {
                           color: isSelected == 'location'
                               ? primaryColor
                               : greyColor,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
                     ),
@@ -229,8 +229,8 @@ class _DiscoverMatchesState extends State<DiscoverMatches> {
                         'Profession',
                         style: TextStyle(
                           color: isSelected == 'profession' ? primaryColor : greyColor,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
                     ),
@@ -265,20 +265,26 @@ class _DiscoverMatchesState extends State<DiscoverMatches> {
   }
 
   locMatches() {
+
+    var size = MediaQuery.of(context).size;
+
+    /*24 is for notification bar on Android*/
+    final double itemHeight = (size.height - kToolbarHeight - 24) / 2.4;
+    final double itemWidth = size.width / 2;
+
     return locMatchesList.length > 0 ? Expanded(
-      child: ListView.builder(
-        physics: const BouncingScrollPhysics(),
-        itemCount: locMatchesList.length,
-        itemBuilder: (context, index) {
-          final item = locMatchesList[index];
-          return Padding(
-            padding: const EdgeInsets.fromLTRB(
-              fixPadding * 2.0,
-              0,
-              fixPadding * 2.0,
-              fixPadding * 3.0,
-            ),
-            child: InkWell(
+      child: Container(
+        margin: EdgeInsets.only(left: 10.0,right: 10.0,bottom: 5.0),
+        child: GridView.builder(
+          physics: const BouncingScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: (itemWidth / itemHeight),
+          ),
+          itemCount: locMatchesList.length,
+          itemBuilder: (context, index) {
+            final item = locMatchesList[index];
+            return InkWell(
               onTap: () {
                 if (totalVisitCount == "Unlimited" || myVisitCount < int.parse(totalVisitCount)) {
                   Navigator.push(
@@ -291,12 +297,10 @@ class _DiscoverMatchesState extends State<DiscoverMatches> {
                       ),
                     ),
                   );
-                }
-                else {
+                } else {
                   showSnackBar(context,
                       'Your daily profile visit limit has exceeded');
                 }
-
               },
               child: Card(
                 elevation: 2,
@@ -314,7 +318,7 @@ class _DiscoverMatchesState extends State<DiscoverMatches> {
                       Hero(
                         tag: locMatchesList[index],
                         child: SizedBox(
-                          height: height * 0.16,
+                          height: height * 0.20,
                           width: double.infinity,
                           child: item.imageUrl.toString().isNotEmpty ? Image.network(
                             item.imageUrl as String,
@@ -330,34 +334,41 @@ class _DiscoverMatchesState extends State<DiscoverMatches> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                item.name.toString().isNotEmpty ?
-                                Text(
-                                  '${item.name}',
-                                  style: black17BoldTextStyle,
-                                ) : Text(
-                                  'Unknown',
-                                  style: black17BoldTextStyle,
+                                Expanded(
+                                  flex: 8,
+                                  child: item.name.toString().isNotEmpty ?
+                                  Text(
+                                    '${item.name}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: black17BoldTextStyle,
+                                  ) : Text(
+                                    'Unknown',
+                                    style: black17BoldTextStyle,
+                                  ),
                                 ),
-                                InkWell(
-                                  onTap: () {
+                                Expanded(
+                                  flex: 2,
+                                  child: InkWell(
+                                    onTap: () {
 
-                                    item.isStared == false
-                                        ?  addToWishlist(item.id) : removeWishlist(item.id,item.name);
+                                      item.isStared == false
+                                          ?  addToWishlist(item.id) : removeWishlist(item.id,item.name);
 
-                                    setState(() {
-                                      item.isStared = !(item.isStared as bool);
-                                    });
+                                      setState(() {
+                                        item.isStared = !(item.isStared as bool);
+                                      });
 
-                                  },
-                                  child: Icon(
-                                    item.isStared == true
-                                        ? Icons.star_rounded :
-                                    Icons.star_border_rounded,
-                                    color: primaryColor,
-                                    size: 22,
+                                    },
+                                    child: Icon(
+                                      item.isStared == true
+                                          ? Icons.favorite_rounded :
+                                      Icons.favorite_outline_rounded,
+                                      color: primaryColor,
+                                      size: 30,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -373,73 +384,74 @@ class _DiscoverMatchesState extends State<DiscoverMatches> {
                             ),
                             Text(
                               '${item.cast}, ${item.city} - ${item.state}',
-                              style: black13SemiBoldTextStyle,
+                              style: grey12castTextStyle,
                             ),
                             heightSpace,
                             heightSpace,
-                            Row(
-                              children: [
-                                !item.interestApproved ? InkWell(
-                                  onTap: (){
-                                    if(!item.isInterestAdded) {
-                                      sendInterest(item.id,item.name);
-                                    }
-                                  },
-                                  child: Container(
-                                    width: 120,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: fixPadding / 2),
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: primaryColor,
-                                        width: 1.5,
-                                      ),
-                                      borderRadius: BorderRadius.circular(5),
+                            heightSpace,
+                            heightSpace,
+                            !item.interestApproved ? Center(
+                              child: InkWell(
+                                onTap: (){
+                                  if(!item.isInterestAdded) {
+                                    sendInterest(item.id,item.name);
+                                  }
+                                },
+                                child: Container(
+                                  width: 120,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: fixPadding / 2),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: primaryColor,
+                                      width: 1.5,
                                     ),
-                                    child: Text(
-                                      item.isInterestAdded ? 'Requested' : 'Send Interest',
-                                      style: primaryColor15BoldTextStyle,
-                                    ),
+                                    borderRadius: BorderRadius.circular(5),
                                   ),
-                                )
-                                : Container(),
-                                !item.interestApproved ? widthSpace : Container(),
-                                !item.interestApproved ? widthSpace : Container(),
-                                InkWell(
-                                  onTap: () {
-                                    if(item.interestApproved) {
-                                      if (totalVisitCount == "Unlimited" ||
-                                          totalVisitCount != "0") {
-                                        IntentUtils.makePhoneCall(
-                                            context, item.mobile);
-                                      }
-                                    }
-                                    else{
-                                      showSnackBar(context, 'You will be able to call person once the interest is approved');
-                                    }
-                                  } ,
-                                  child: Container(
-                                    width: 120,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: fixPadding / 2),
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: primaryColor,
-                                        width: 1.5,
-                                      ),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Text(
-                                      'Call Now',
-                                      style: primaryColor15BoldTextStyle,
-                                    ),
+                                  child: Text(
+                                    item.isInterestAdded ? 'Requested' : 'Send Interest',
+                                    style: primaryColor15BoldTextStyle,
                                   ),
                                 ),
-                              ],
-                            ),
-                            heightSpace,
+                              ),
+                            )
+                                : Container(),
+                            // !item.interestApproved ? heightSpace : Container(),
+                            // !item.interestApproved ? heightSpace : Container(),
+                            // Center(
+                            //   child: InkWell(
+                            //     onTap: () {
+                            //       if(item.interestApproved) {
+                            //         if (totalVisitCount == "Unlimited" ||
+                            //             totalVisitCount != "0") {
+                            //           IntentUtils.makePhoneCall(
+                            //               context, item.mobile);
+                            //         }
+                            //       }
+                            //       else{
+                            //         showSnackBar(context, 'You will be able to call person once the interest is approved');
+                            //       }
+                            //     } ,
+                            //     child: Container(
+                            //       width: 120,
+                            //       padding: const EdgeInsets.symmetric(
+                            //           vertical: fixPadding / 2),
+                            //       alignment: Alignment.center,
+                            //       decoration: BoxDecoration(
+                            //         border: Border.all(
+                            //           color: primaryColor,
+                            //           width: 1.5,
+                            //         ),
+                            //         borderRadius: BorderRadius.circular(5),
+                            //       ),
+                            //       child: Text(
+                            //         'Call Now',
+                            //         style: primaryColor15BoldTextStyle,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
                             // Row(
                             //   mainAxisAlignment: MainAxisAlignment.end,
                             //   children: [
@@ -466,28 +478,34 @@ class _DiscoverMatchesState extends State<DiscoverMatches> {
                   ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     )
     : Container();
   }
 
   profMatches() {
+
+    var size = MediaQuery.of(context).size;
+
+    /*24 is for notification bar on Android*/
+    final double itemHeight = (size.height - kToolbarHeight - 24) / 2.4;
+    final double itemWidth = size.width / 2;
+
     return profMatchesList.length > 0 ? Expanded(
-      child: ListView.builder(
+      child: GridView.builder(
         physics: const BouncingScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: (itemWidth / itemHeight),
+        ),
         itemCount: profMatchesList.length,
         itemBuilder: (context, index) {
           final item = profMatchesList[index];
-          return Padding(
-            padding: const EdgeInsets.fromLTRB(
-              fixPadding * 2.0,
-              0,
-              fixPadding * 2.0,
-              fixPadding * 3.0,
-            ),
+          return Container(
+            margin: EdgeInsets.only(left: 10.0,right: 10.0,bottom: 5.0),
             child: InkWell(
               onTap: () {
                 if (totalVisitCount == "Unlimited" || myVisitCount < int.parse(totalVisitCount)) {
@@ -524,7 +542,7 @@ class _DiscoverMatchesState extends State<DiscoverMatches> {
                       Hero(
                         tag: profMatchesList[index],
                         child: SizedBox(
-                          height: height * 0.16,
+                          height: height * 0.20,
                           width: double.infinity,
                           child: item.imageUrl.toString().isNotEmpty ? Image.network(
                             item.imageUrl as String,
@@ -540,34 +558,41 @@ class _DiscoverMatchesState extends State<DiscoverMatches> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                item.name.toString().isNotEmpty ?
-                                Text(
-                                  '${item.name}',
-                                  style: black17BoldTextStyle,
-                                ) : Text(
-                                  'Unknown',
-                                  style: black17BoldTextStyle,
+                                Expanded(
+                                  flex: 8,
+                                  child: item.name.toString().isNotEmpty ?
+                                  Text(
+                                    '${item.name}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: black17BoldTextStyle,
+                                  ) : Text(
+                                    'Unknown',
+                                    style: black17BoldTextStyle,
+                                  ),
                                 ),
-                                InkWell(
-                                  onTap: () {
+                                Expanded(
+                                  flex: 2,
+                                  child: InkWell(
+                                    onTap: () {
 
-                                    item.isStared == false
-                                        ?  addToWishlist(item.id) : removeWishlist(item.id,item.name);
+                                      item.isStared == false
+                                          ?  addToWishlist(item.id) : removeWishlist(item.id,item.name);
 
-                                    setState(() {
-                                      item.isStared = !(item.isStared as bool);
-                                    });
+                                      setState(() {
+                                        item.isStared = !(item.isStared as bool);
+                                      });
 
-                                  },
-                                  child: Icon(
-                                    item.isStared == true
-                                        ? Icons.star_rounded :
-                                    Icons.star_border_rounded,
-                                    color: primaryColor,
-                                    size: 22,
+                                    },
+                                    child: Icon(
+                                      item.isStared == true
+                                          ? Icons.favorite_rounded :
+                                      Icons.favorite_outline_rounded,
+                                      color: primaryColor,
+                                      size: 30,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -583,73 +608,75 @@ class _DiscoverMatchesState extends State<DiscoverMatches> {
                             ),
                             Text(
                               '${item.cast}, ${item.city} - ${item.state}',
-                              style: black13SemiBoldTextStyle,
+                              style: grey12castTextStyle,
                             ),
                             heightSpace,
                             heightSpace,
-                            Row(
-                              children: [
-                                !item.interestApproved ? InkWell(
-                                  onTap: (){
-                                    if(!item.isInterestAdded) {
-                                      sendInterest(item.id,item.name);
-                                    }
-                                  },
-                                  child: Container(
-                                    width: 120,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: fixPadding / 2),
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: primaryColor,
-                                        width: 1.5,
-                                      ),
-                                      borderRadius: BorderRadius.circular(5),
+                            heightSpace,
+                            heightSpace,
+                            !item.interestApproved ? Center(
+                              child: InkWell(
+                                onTap: (){
+                                  if(!item.isInterestAdded) {
+                                    sendInterest(item.id,item.name);
+                                  }
+                                },
+                                child: Container(
+                                  width: 120,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: fixPadding / 2),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: primaryColor,
+                                      width: 1.5,
                                     ),
-                                    child: Text(
-                                      item.isInterestAdded ? 'Requested' : 'Send Interest',
-                                      style: primaryColor15BoldTextStyle,
-                                    ),
+                                    borderRadius: BorderRadius.circular(5),
                                   ),
-                                )
-                                    : Container(),
-                                !item.interestApproved ? widthSpace : Container(),
-                                !item.interestApproved ? widthSpace : Container(),
-                                InkWell(
-                                  onTap: () {
-                                    if(item.interestApproved) {
-                                      if (totalVisitCount == "Unlimited" ||
-                                          totalVisitCount != "0") {
-                                        IntentUtils.makePhoneCall(
-                                            context, item.mobile);
-                                      }
-                                    }
-                                    else{
-                                      showSnackBar(context, 'You will be able to call person once the interest is approved');
-                                    }
-                                  } ,
-                                  child: Container(
-                                    width: 120,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: fixPadding / 2),
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: primaryColor,
-                                        width: 1.5,
-                                      ),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Text(
-                                      'Call Now',
-                                      style: primaryColor15BoldTextStyle,
-                                    ),
+                                  child: Text(
+                                    item.isInterestAdded ? 'Requested' : 'Send Interest',
+                                    style: primaryColor15BoldTextStyle,
                                   ),
                                 ),
-                              ],
-                            ),
-                            heightSpace,
+                              ),
+                            )
+                                : Container(),
+                            // !item.interestApproved ? heightSpace : Container(),
+                            // !item.interestApproved ? heightSpace : Container(),
+                            // Center(
+                            //   child: InkWell(
+                            //     onTap: () {
+                            //       if(item.interestApproved) {
+                            //         if (totalVisitCount == "Unlimited" ||
+                            //             totalVisitCount != "0") {
+                            //           IntentUtils.makePhoneCall(
+                            //               context, item.mobile);
+                            //         }
+                            //       }
+                            //       else{
+                            //         showSnackBar(context, 'You will be able to call person once the interest is approved');
+                            //       }
+                            //     } ,
+                            //     child: Container(
+                            //       width: 120,
+                            //       padding: const EdgeInsets.symmetric(
+                            //           vertical: fixPadding / 2),
+                            //       alignment: Alignment.center,
+                            //       decoration: BoxDecoration(
+                            //         border: Border.all(
+                            //           color: primaryColor,
+                            //           width: 1.5,
+                            //         ),
+                            //         borderRadius: BorderRadius.circular(5),
+                            //       ),
+                            //       child: Text(
+                            //         'Call Now',
+                            //         style: primaryColor15BoldTextStyle,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                            // heightSpace,
                             // Row(
                             //   mainAxisAlignment: MainAxisAlignment.end,
                             //   children: [
@@ -693,7 +720,7 @@ class _DiscoverMatchesState extends State<DiscoverMatches> {
             _isLoading = true;
           });
 
-          final UserMatchModel matchModel = await API_Manager.discoverLocationMatch(widget.city,id);
+          final UserMatchModel matchModel = await API_Manager.discoverLocationMatch(widget.city,id,strgender);
 
 
           if (matchModel.error!=true) {
@@ -740,7 +767,7 @@ class _DiscoverMatchesState extends State<DiscoverMatches> {
             _isLoading = true;
           });
 
-          final UserMatchModel matchModel = await API_Manager.discoverProfessionMatch(widget.profession,id);
+          final UserMatchModel matchModel = await API_Manager.discoverProfessionMatch(widget.profession,id,strgender);
 
 
           if (matchModel.error!=true) {

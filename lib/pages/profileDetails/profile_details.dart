@@ -89,8 +89,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
       InterestStatus(id: '', userId: '', requestedId: '', status: '');
 
   get imagewidget => widget.image!.isNotEmpty
-      ? NetworkImage(widget.image!)
-      : AssetImage('assets/logo.jpg');
+      ? NetworkImage(widget.image!,)
+      : AssetImage('assets/logo.jpg',);
 
   @override
   initState() {
@@ -269,6 +269,113 @@ class _ProfileDetailsState extends State<ProfileDetails> {
               )
             : nestedScrollView(),
       ),
+      floatingActionButton: floatingWidget(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+    );
+  }
+
+  floatingWidget(){
+    return Container(
+      width: MediaQuery.of(context).size.width/1.8,
+      height: 60.0,
+      padding: EdgeInsets.only(left: 15.0,right: 15.0,top: 8.0,bottom: 8.0),
+      decoration: BoxDecoration(
+        color: primaryColor,
+        borderRadius: BorderRadius.circular(60.0)
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onTap: (){
+              setState(() {
+                isTap = !isTap;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: isTap
+                      ? const Text('Add to shortlist')
+                      : const Text('Remove from shortlist'),
+                ),
+              );
+            },
+            child: Column(
+              children: [
+                Icon(
+                  isTap
+                      ? Icons.favorite
+                      : Icons.favorite_outline_rounded,
+                  color: whiteColor,
+                  size: 20,
+                ),
+                heightSpace,
+                Text(
+                  'ShortList'.toUpperCase(),
+                  style: white10BlackTextStyle,
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 10,),
+          GestureDetector(
+            onTap: (){
+              if (interestStatus.status == "0") {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Chat(widget.id!,
+                          userDetails.imageUrl, userDetails.name)),
+                );
+              } else {
+                showSnackBar(context,
+                    'You can only chat with the persons who have added/approved you as an interest');
+              }
+            },
+            child: Column(
+              children: [
+                Image.asset(
+                  'assets/icons/sms.png',
+                  color: whiteColor,
+                  height: 20,
+                  width: 20,
+                ),
+                heightSpace,
+                Text(
+                  'Chatnow'.toUpperCase(),
+                  style: white10BlackTextStyle,
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 10,),
+          GestureDetector(
+            onTap: (){
+              if (interestStatus.status == "0") {
+                IntentUtils.makePhoneCall(
+                    context, userDetails.mobile);
+              } else {
+                showSnackBar(context,
+                    'You can only call a person who has added/approved you as an interest');
+              }
+            },
+            child: Column(
+              children: [
+                Icon(
+                  Icons.call,
+                  color: whiteColor,
+                  size: 20,
+                ),
+                heightSpace,
+                Text(
+                  'Callnow'.toUpperCase(),
+                  style: white10BlackTextStyle,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -277,7 +384,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
       headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
         return [
           SliverAppBar(
-            expandedHeight: MediaQuery.of(context).size.height * 0.25,
+            expandedHeight: MediaQuery.of(context).size.height * 0.32,
             titleSpacing: 0,
             backgroundColor: primaryColor,
             pinned: true,
@@ -299,7 +406,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: imagewidget,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                     ),
                   ),
                   child: Container(
@@ -308,129 +415,129 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                 ),
               ),
             ),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(50),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: fixPadding * 2.0,
-                  vertical: fixPadding,
-                ),
-                child: Row(
-                  children: [
-                    Column(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              isTap = !isTap;
-                            });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: isTap
-                                    ? const Text('Add to shortlist')
-                                    : const Text('Remove from shortlist'),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(3),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: whiteColor, width: 1.5),
-                            ),
-                            child: Icon(
-                              isTap
-                                  ? Icons.star_rounded
-                                  : Icons.star_border_rounded,
-                              color: whiteColor,
-                              size: 18,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'ShortList'.toUpperCase(),
-                          style: white10BlackTextStyle,
-                        ),
-                      ],
-                    ),
-                    widthSpace,
-                    widthSpace,
-                    InkWell(
-                      onTap: () {
-                        if (interestStatus.status == "0") {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Chat(widget.id!,
-                                    userDetails.imageUrl, userDetails.name)),
-                          );
-                        } else {
-                          showSnackBar(context,
-                              'You can only chat with the persons who have added/approved you as an interest');
-                        }
-                      },
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(3),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: whiteColor, width: 1.5),
-                            ),
-                            child: Image.asset(
-                              'assets/icons/sms.png',
-                              color: whiteColor,
-                              height: 18,
-                              width: 18,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'ChatNow'.toUpperCase(),
-                            style: white10BlackTextStyle,
-                          ),
-                        ],
-                      ),
-                    ),
-                    widthSpace,
-                    widthSpace,
-                    InkWell(
-                      onTap: () {
-                        if (interestStatus.status == "0") {
-                          IntentUtils.makePhoneCall(
-                              context, userDetails.mobile);
-                        } else {
-                          showSnackBar(context,
-                              'You can only call a person who has added/approved you as an interest');
-                        }
-                      },
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(3),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: whiteColor, width: 1.5),
-                            ),
-                            child: const Icon(
-                              Icons.call,
-                              color: whiteColor,
-                              size: 18,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'CallNow'.toUpperCase(),
-                            style: white10BlackTextStyle,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            // bottom: PreferredSize(
+            //   preferredSize: const Size.fromHeight(50),
+            //   child: Padding(
+            //     padding: const EdgeInsets.symmetric(
+            //       horizontal: fixPadding * 2.0,
+            //       vertical: fixPadding,
+            //     ),
+            //     child: Row(
+            //       children: [
+            //         Column(
+            //           children: [
+            //             InkWell(
+            //               onTap: () {
+            //                 setState(() {
+            //                   isTap = !isTap;
+            //                 });
+            //                 ScaffoldMessenger.of(context).showSnackBar(
+            //                   SnackBar(
+            //                     content: isTap
+            //                         ? const Text('Add to shortlist')
+            //                         : const Text('Remove from shortlist'),
+            //                   ),
+            //                 );
+            //               },
+            //               child: Container(
+            //                 padding: const EdgeInsets.all(3),
+            //                 decoration: BoxDecoration(
+            //                   shape: BoxShape.circle,
+            //                   border: Border.all(color: whiteColor, width: 1.5),
+            //                 ),
+            //                 child: Icon(
+            //                   isTap
+            //                       ? Icons.favorite
+            //                       : Icons.favorite_outline_rounded,
+            //                   color: whiteColor,
+            //                   size: 18,
+            //                 ),
+            //               ),
+            //             ),
+            //             const SizedBox(height: 2),
+            //             Text(
+            //               'ShortList'.toUpperCase(),
+            //               style: white10BlackTextStyle,
+            //             ),
+            //           ],
+            //         ),
+            //         widthSpace,
+            //         widthSpace,
+            //         InkWell(
+            //           onTap: () {
+            //             if (interestStatus.status == "0") {
+            //               Navigator.push(
+            //                 context,
+            //                 MaterialPageRoute(
+            //                     builder: (context) => Chat(widget.id!,
+            //                         userDetails.imageUrl, userDetails.name)),
+            //               );
+            //             } else {
+            //               showSnackBar(context,
+            //                   'You can only chat with the persons who have added/approved you as an interest');
+            //             }
+            //           },
+            //           child: Column(
+            //             children: [
+            //               Container(
+            //                 padding: const EdgeInsets.all(3),
+            //                 decoration: BoxDecoration(
+            //                   shape: BoxShape.circle,
+            //                   border: Border.all(color: whiteColor, width: 1.5),
+            //                 ),
+            //                 child: Image.asset(
+            //                   'assets/icons/sms.png',
+            //                   color: whiteColor,
+            //                   height: 18,
+            //                   width: 18,
+            //                 ),
+            //               ),
+            //               const SizedBox(height: 2),
+            //               Text(
+            //                 'ChatNow'.toUpperCase(),
+            //                 style: white10BlackTextStyle,
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //         widthSpace,
+            //         widthSpace,
+            //         InkWell(
+            //           onTap: () {
+            //             if (interestStatus.status == "0") {
+            //               IntentUtils.makePhoneCall(
+            //                   context, userDetails.mobile);
+            //             } else {
+            //               showSnackBar(context,
+            //                   'You can only call a person who has added/approved you as an interest');
+            //             }
+            //           },
+            //           child: Column(
+            //             children: [
+            //               Container(
+            //                 padding: const EdgeInsets.all(3),
+            //                 decoration: BoxDecoration(
+            //                   shape: BoxShape.circle,
+            //                   border: Border.all(color: whiteColor, width: 1.5),
+            //                 ),
+            //                 child: const Icon(
+            //                   Icons.call,
+            //                   color: whiteColor,
+            //                   size: 18,
+            //                 ),
+            //               ),
+            //               const SizedBox(height: 2),
+            //               Text(
+            //                 'CallNow'.toUpperCase(),
+            //                 style: white10BlackTextStyle,
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ),
         ];
       },
@@ -624,6 +731,22 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         contact(),
         heightSpace,
         heightSpace,
+        heightSpace,
+        heightSpace,
+        heightSpace,
+        heightSpace,
+        heightSpace,
+        heightSpace,
+        heightSpace,
+        heightSpace,
+        heightSpace,
+        heightSpace,
+        heightSpace,
+        heightSpace,
+        heightSpace,
+        heightSpace,
+        heightSpace,
+        heightSpace,
         iHaveSubscribed ? Container() : heightSpace,
         iHaveSubscribed ? Container() : heightSpace,
         iHaveSubscribed ? Container() : heightSpace,
@@ -646,11 +769,11 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         heightSpace,
         Text(
           'A Few Lines About Me',
-          style: grey14BoldTextStyle,
+          style: grey15SemiBoldTextStyle,
         ),
         Text(
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmo eiusmod tempor incididunt ut labore et dolore magna aliqua Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod...',
-          style: grey13RegularTextStyle,
+          style: grey15BlackTextStyle,
         ),
       ],
     );
@@ -685,14 +808,14 @@ class _ProfileDetailsState extends State<ProfileDetails> {
             flex: 1,
             child: Text(
               title,
-              style: grey13SemiBoldTextStyle,
+              style: grey15SemiBoldTextStyle,
             ),
           ),
           Expanded(
             flex: 2,
             child: Text(
               '-     ${value}',
-              style: grey13SemiBoldTextStyle,
+              style: grey15BlackTextStyle,
             ),
           ),
         ],
@@ -735,7 +858,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       children: [
                         Text(
                           item.hobby,
-                          style: grey13SemiBoldTextStyle,
+                          style: grey15BlackTextStyle,
                         ),
                       ],
                     ),
@@ -773,14 +896,14 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                           flex: 1,
                           child: Text(
                             item.relation,
-                            style: grey13SemiBoldTextStyle,
+                            style: grey15SemiBoldTextStyle,
                           ),
                         ),
                         Expanded(
                           flex: 2,
                           child: Text(
                             '-     ${item.name}',
-                            style: grey13SemiBoldTextStyle,
+                            style: grey15BlackTextStyle,
                           ),
                         ),
                       ],
@@ -827,11 +950,11 @@ class _ProfileDetailsState extends State<ProfileDetails> {
               child: userDetails.gender == 'Male'
                   ? Text(
                       'His Mobile No',
-                      style: grey13SemiBoldTextStyle,
+                      style: grey15SemiBoldTextStyle,
                     )
                   : Text(
                       'Her Mobile No',
-                      style: grey13SemiBoldTextStyle,
+                      style: grey15SemiBoldTextStyle,
                     ),
             ),
             Expanded(
@@ -839,11 +962,11 @@ class _ProfileDetailsState extends State<ProfileDetails> {
               child: iHaveSubscribed
                   ? Text(
                       '-     +91 ' + userDetails.mobile,
-                      style: grey13SemiBoldTextStyle,
+                      style: grey15BlackTextStyle,
                     )
                   : Text(
                       '-     +91 $strphone********',
-                      style: grey13SemiBoldTextStyle,
+                      style: grey15BlackTextStyle,
                     ),
             ),
           ],
@@ -980,14 +1103,14 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   title(String title) {
     return Text(
       title,
-      style: black16BoldTextStyle,
+      style: primaryColor18BoldTextStyle,
     );
   }
 
   subTitle(String title) {
     return Text(
       title,
-      style: black14BoldTextStyle,
+      style: blacksubBoldTextStyle,
     );
   }
 }

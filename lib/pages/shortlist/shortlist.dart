@@ -20,6 +20,7 @@ class _ShortlistState extends State<Shortlist> {
   bool _isLoading = false;
   String id = "" ,totalVisitCount="";
   int myVisitCount=0;
+  late double height;
 
   @override
   void initState() {
@@ -65,6 +66,9 @@ class _ShortlistState extends State<Shortlist> {
 
   @override
   Widget build(BuildContext context) {
+
+    height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -95,9 +99,9 @@ class _ShortlistState extends State<Shortlist> {
           child: Column(
             children: [
               const Icon(
-                Icons.star_rounded,
+                Icons.favorite_rounded,
                 color: greyColor,
-                size: 35,
+                size: 40,
               ),
               Text(
                 'Short list is empty',
@@ -116,18 +120,23 @@ class _ShortlistState extends State<Shortlist> {
   }
 
   shortLists() {
-    return ListView.builder(
+
+    var size = MediaQuery.of(context).size;
+
+    final double itemHeight = (size.height - kToolbarHeight - 24) / 2.2;
+    final double itemWidth = size.width / 2;
+
+    return GridView.builder(
       physics: const BouncingScrollPhysics(),
       itemCount: shortList.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: (itemWidth / itemHeight),
+      ),
       itemBuilder: (context, index) {
         final item = shortList[index];
-        return Padding(
-          padding: EdgeInsets.fromLTRB(
-            fixPadding * 2.0,
-            index == 0 ? fixPadding * 2.0 : 0,
-            fixPadding * 2.0,
-            0,
-          ),
+        return Container(
+          margin: EdgeInsets.only(left: 10.0,right: 10.0,bottom: 5.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -148,61 +157,104 @@ class _ShortlistState extends State<Shortlist> {
                             'Your daily profile visit limit has exceeded');
                       }
                     },
-                child: Row(
-                  children: [
-                    Container(
-                      height: 55,
-                      width: 55,
-                      decoration: BoxDecoration(
+                child: Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: ClipPath(
+                    clipper: ShapeBorderClipper(
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
-                        image: DecorationImage(
-                          image: getImageWidget(item.imageUrl),
-                          fit: BoxFit.cover,
-                        ),
                       ),
                     ),
-                    widthSpace,
-                    widthSpace,
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.name.toString().isNotEmpty ? item.name : 'Unknown',
-                            style: black14SemiBoldTextStyle,
+                    child: Column(
+                      children: [
+                        // Container(
+                        //   height: 55,
+                        //   width: 55,
+                        //   decoration: BoxDecoration(
+                        //     borderRadius: BorderRadius.circular(5),
+                        //     image: DecorationImage(
+                        //       image: getImageWidget(item.imageUrl),
+                        //       fit: BoxFit.cover,
+                        //     ),
+                        //   ),
+                        // ),
+                        Hero(
+                          tag: shortList[index],
+                          child: SizedBox(
+                            height: height * 0.20,
+                            width: double.infinity,
+                            child: item.imageUrl.toString().isNotEmpty ? Image.network(
+                              item.imageUrl as String,
+                              fit: BoxFit.cover,
+                            ) : Image.asset('assets/logo.jpg',
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                          Text(
-                            '${item.occupation}   ${item.age} yrs, ${item.userHeight}',
-                            style: grey12RegularTextStyle,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(fixPadding),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              item.name.toString().isNotEmpty ?
                               Text(
-                                '${item.religion}, ${item.city} - ${item.state}',
-                                style: grey12RegularTextStyle,
+                                '${item.name}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: black17BoldTextStyle,
+                              ) : Text(
+                                'Unknown',
+                                style: black17BoldTextStyle,
                               ),
-                              InkWell(
-                                onTap: () {
-                                  removeWishlist(item.id,item.name);
-                                  setState(() {
-                                    shortList.removeAt(index);
-                                  });
-                                },
-                                child: Text(
-                                  'Remove',
-                                  style: primaryColor12BlackTextStyle,
+                              heightSpace,
+                              Text(
+                                '${item.occupation}   ${item.age} yrs, ${item.userHeight}',
+                                style: black13SemiBoldTextStyle,
+                              ),
+                              Text(
+                                '${item.cast}, ${item.city} - ${item.state}',
+                                style: grey12castTextStyle,
+                              ),
+                              heightSpace,
+                              heightSpace,
+                              Center(
+                                child: InkWell(
+                                  onTap: (){
+                                    removeWishlist(item.id,item.name);
+                                    setState(() {
+                                      shortList.removeAt(index);
+                                    });
+                                  },
+                                  child: Container(
+                                    width: 120,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: fixPadding / 2),
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: primaryColor,
+                                        width: 1.5,
+                                      ),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Text(
+                                      'Remove',
+                                      style: primaryColor15BoldTextStyle,
+                                    ),
+                                  ),
                                 ),
-                              ),
+                              )
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-              divider(),
             ],
           ),
         );

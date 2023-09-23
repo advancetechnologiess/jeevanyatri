@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:image_crop/image_crop.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -500,6 +501,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               : InkWell(
                   onTap: checkPermission,
                   child: CircleAvatar(
+                    radius: 50,
                     backgroundImage: AssetImage('assets/logo.jpg'),
                   ),
                 ),
@@ -594,7 +596,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       children: [
         title('New Matches'),
         SizedBox(
-          height: height * 0.23,
+          height: height * 0.25,
           child: ListView.builder(
             physics: const BouncingScrollPhysics(),
             scrollDirection: Axis.horizontal,
@@ -633,12 +635,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   child: Card(
                     elevation: 2,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: ClipPath(
                       clipper: ShapeBorderClipper(
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
                       child: Column(
@@ -649,21 +651,21 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                               Hero(
                                 tag: newMatchesList[index],
                                 child: SizedBox(
-                                  height: height * 0.1316,
+                                  height: height * 0.15,
                                   width: width * 0.36,
                                   child: item.imageUrl.toString().isNotEmpty
                                       ? Image.network(
                                           item.imageUrl as String,
-                                          fit: BoxFit.cover,
+                                          fit: BoxFit.fill,
                                         )
                                       : Image.asset(
                                           'assets/logo.jpg',
-                                          fit: BoxFit.cover,
+                                          fit: BoxFit.fill,
                                         ),
                                 ),
                               ),
                               Positioned(
-                                bottom: 2,
+                                top: 2,
                                 right: 5,
                                 child: InkWell(
                                   onTap: () {
@@ -678,9 +680,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                   },
                                   child: Icon(
                                     item.isStared == true
-                                        ? Icons.star_rounded
-                                        : Icons.star_border_rounded,
-                                    size: 25,
+                                        ? Icons.favorite_rounded
+                                        : Icons.favorite_outline_rounded,
+                                    size: 30,
                                     color: primaryColor,
                                   ),
                                 ),
@@ -1212,16 +1214,33 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     );
   }
 
-  checkPermission() async {
-    final status = await Permission.storage.request();
-    // final status2 = await Permission.camera.request();
-    if (status == PermissionStatus.granted) {
-      print('Permission granted.');
-      _pickImage();
-    } else if (status == PermissionStatus.denied) {
-      print(
-          'Permission denied. Show a dialog and again ask for the permission');
-      await Permission.storage.shouldShowRequestRationale;
+  checkPermission() async{
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    if (androidInfo.version.sdkInt >= 33) {
+      final videos = await Permission.videos.request();
+      final photos = await Permission.photos.request();
+
+      if (videos == PermissionStatus.granted && photos == PermissionStatus.granted) {
+        print('Permission granted.');
+        _pickImage();
+      } else if (videos == PermissionStatus.denied || photos == PermissionStatus.denied) {
+        print('Permission denied. Show a dialog and again ask for the permission');
+        await [Permission.photos, Permission.videos].request();
+      }
+    } else {
+      final status = await Permission.storage.request();
+      print("Inner Called "+status.toString());
+      // final status2 = await Permission.camera.request();
+      if(status == PermissionStatus.permanentlyDenied){
+        openAppSettings();
+      } else if (status == PermissionStatus.granted) {
+        print('Permission granted.');
+        _pickImage();
+      } else if (status == PermissionStatus.denied) {
+        print('Permission denied. Show a dialog and again ask for the permission');
+        await Permission.storage.shouldShowRequestRationale;
+      }
     }
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 // const Color primaryColor = Color(0xff003d00);
 const Color primaryColor = Color(0xff810101);
+const Color secondaryColor = Color(0xB0810101);
 const Color whiteColor = Colors.white;
 const Color blackColor = Colors.black;
 const Color greyColor = Colors.grey;
@@ -121,6 +122,12 @@ TextStyle black14BoldTextStyle = const TextStyle(
   fontWeight: FontWeight.w700,
 );
 
+TextStyle blacksubBoldTextStyle = const TextStyle(
+  color: blackColor,
+  fontSize: 16,
+  fontWeight: FontWeight.w800,
+);
+
 TextStyle black14SemiBoldTextStyle = const TextStyle(
   color: blackColor,
   fontSize: 14,
@@ -173,6 +180,18 @@ TextStyle grey13SemiBoldTextStyle = const TextStyle(
   color: greyColor,
   fontSize: 13,
   fontWeight: FontWeight.w600,
+);
+
+TextStyle grey15BlackTextStyle = const TextStyle(
+  color: blackColor,
+  fontSize: 15,
+  fontWeight: FontWeight.w600,
+);
+
+TextStyle grey15SemiBoldTextStyle = const TextStyle(
+  color: greyColor,
+  fontSize: 15,
+  fontWeight: FontWeight.bold,
 );
 
 TextStyle white13SemiBoldTextStyle = const TextStyle(
@@ -293,6 +312,12 @@ TextStyle grey9RegularTextStyle = const TextStyle(
   color: greyColor,
   fontSize: 9,
   fontWeight: FontWeight.w400,
+);
+
+TextStyle grey12castTextStyle = const TextStyle(
+  color: greyColor,
+  fontSize: 12,
+  fontWeight: FontWeight.bold,
 );
 
 showSnackBar(BuildContext context, String text) {

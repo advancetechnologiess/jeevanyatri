@@ -420,33 +420,36 @@ class _EditDetailsState extends State<EditDetails> {
               borderRadius: BorderRadius.circular(5),
             ),
             child: DropdownButtonHideUnderline(
-              child: DropdownButton(
-                isExpanded: true,
-                elevation: 4,
-                isDense: true,
-                hint: Text(
-                  'Male',
+              child: IgnorePointer(
+                ignoring: true,
+                child: DropdownButton(
+                  isExpanded: true,
+                  elevation: 4,
+                  isDense: true,
+                  hint: Text(
+                    'Male',
+                    style: black13RegularTextStyle,
+                  ),
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: primaryColor,
+                    size: 20,
+                  ),
+                  value: gender,
                   style: black13RegularTextStyle,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      gender = newValue;
+                    });
+                  },
+                  items: <String>['Male', 'Female']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
                 ),
-                icon: const Icon(
-                  Icons.keyboard_arrow_down,
-                  color: primaryColor,
-                  size: 20,
-                ),
-                value: gender,
-                style: black13RegularTextStyle,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    gender = newValue;
-                  });
-                },
-                items: <String>['Male', 'Female']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
               ),
             ),
           ),

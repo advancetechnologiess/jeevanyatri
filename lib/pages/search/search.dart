@@ -278,7 +278,7 @@ class _SearchState extends State<Search>{
                       borderRadius: BorderRadius.circular(3),
                       image: DecorationImage(
                         image: getImageWidget(item),
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                       ),
                     ),
                   ),

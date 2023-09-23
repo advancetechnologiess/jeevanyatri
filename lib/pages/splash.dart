@@ -172,12 +172,15 @@ class _SplashState extends State<Splash> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Align(
-                  alignment: Alignment.center,
-                  child: Image.asset(
-                    'assets/logo.png',
-                    height: 100,
-                    width: 110,
+                Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: Image.asset(
+                      'assets/logo.jpg',
+                      fit: BoxFit.fill,
+                      height: 200,
+                      width: 200,
+                    ),
                   ),
                 ),
               ],

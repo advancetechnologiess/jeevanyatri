@@ -49,6 +49,7 @@ dependencies:
   provider: ^6.0.3
   im_stepper: ^1.0.1+1
   csc_picker: ^0.2.6
+  device_info_plus: ^8.2.2
 #  payu_checkoutpro_flutter: ^1.0.0
   firebase_core: ^2.4.0
   payumoney_pro_unofficial: ^0.0.9
